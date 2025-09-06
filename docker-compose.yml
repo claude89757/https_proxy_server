@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  https-proxy:
+    build: .
+    container_name: https_proxy_server
+    ports:
+      - "8080:8080"  # Proxy port
+      - "8081:8081"  # Web interface port
+    volumes:
+      # Mount certificates directory for persistence
+      - mitmproxy-certs:/root/.mitmproxy
+      # Optional: Mount logs directory
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      # Optional: Add custom mitmproxy options
+      - MITMPROXY_OPTS=
+    restart: unless-stopped
+    networks:
+      - proxy-network
+
+volumes:
+  mitmproxy-certs:
+    name: mitmproxy_certificates
+
+networks:
+  proxy-network:
+    driver: bridge

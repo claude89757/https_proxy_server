@@ -1,0 +1,44 @@
+# Git files
+.git
+.gitignore
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Claude files
+.claude/
+
+# Documentation
+*.md
+!README.md
+
+# Shell scripts (not needed in container)
+start_chrome_proxy.sh
+
+# Test files during development
+test_*.py
