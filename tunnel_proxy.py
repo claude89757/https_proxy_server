@@ -18,7 +18,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class TunnelProxy:
-    def __init__(self, host='0.0.0.0', port=8080):
+    def __init__(self, host='0.0.0.0', port=10800):
         self.host = host
         self.port = port
         self.proxy_manager = ProxyManager()
@@ -286,7 +286,7 @@ def main():
     """主函数"""
     import sys
     
-    port = 8080
+    port = 10800
     if len(sys.argv) > 1:
         try:
             port = int(sys.argv[1])

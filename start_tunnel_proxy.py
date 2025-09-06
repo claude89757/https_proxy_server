@@ -37,7 +37,7 @@ def kill_process_on_port(port):
 def main():
     """启动隧道代理服务器"""
     parser = argparse.ArgumentParser(description='HTTP CONNECT隧道代理服务器')
-    parser.add_argument('--port', '-p', type=int, default=8080, help='代理服务端口 (默认: 8080)')
+    parser.add_argument('--port', '-p', type=int, default=10800, help='代理服务端口 (默认: 10800)')
     parser.add_argument('--host', type=str, default='0.0.0.0', help='监听地址 (默认: 0.0.0.0)')
     parser.add_argument('--force', '-f', action='store_true', help='强制清理端口冲突')
     

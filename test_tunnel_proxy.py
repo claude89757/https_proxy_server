@@ -88,7 +88,7 @@ def main():
     ]
     
     proxy_host = '127.0.0.1'
-    proxy_port = 8080
+    proxy_port = 10800
     proxy_url = f'http://{proxy_host}:{proxy_port}'
     
     print(f"🎯 测试目标:")
