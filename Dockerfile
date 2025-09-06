@@ -29,8 +29,7 @@ RUN mkdir -p /root/.mitmproxy
 # Expose ports
 # 8080: Proxy port
 # 8081: Web interface port
-# 10800: Tunnel proxy port
-EXPOSE 8080 8081 10800
+EXPOSE 8080 8081
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1

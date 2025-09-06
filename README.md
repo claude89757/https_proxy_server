@@ -18,6 +18,8 @@ https_proxy_server/
 ├── proxy_manager.py      # Core proxy pool manager
 ├── proxy_addon.py        # mitmproxy addon for request handling
 ├── start_proxy.py        # Main application launcher
+├── tunnel_proxy.py       # HTTP CONNECT tunnel proxy implementation
+├── start_tunnel_proxy.py # Tunnel proxy launcher (certificate-free)
 ├── requirements.txt      # Python dependencies
 ├── Dockerfile           # Docker container configuration
 ├── docker-compose.yml   # Docker Compose configuration
@@ -57,24 +59,14 @@ docker-compose logs -f
 ```
 
 ### Access Points
-- **Proxy Server**: `http://<your-server-ip>:8080`
-- **Web Interface**: `http://<your-server-ip>:8081`
+- **Tunnel Proxy Server**: `http://<your-server-ip>:8080` (Certificate-free HTTPS proxying)
+- **Web Interface**: `http://<your-server-ip>:8081` (Monitoring and management)
 
 Note: Replace `<your-server-ip>` with your actual server IP address or domain name.
 
-## 🔐 SSL Certificate Setup
+## 🔧 Proxy Features
 
-1. The container automatically generates certificates on first run
-
-2. Extract the certificate:
-```bash
-docker cp https_proxy_server:/root/.mitmproxy/mitmproxy-ca-cert.pem ./
-```
-
-3. Install the certificate on your system:
-   - **macOS**: Double-click the .pem file and add to System Keychain, then trust it
-   - **Windows**: Import to Trusted Root Certification Authorities
-   - **Linux**: Copy to `/usr/local/share/ca-certificates/` and run `update-ca-certificates`
+This proxy server runs in **tunnel mode**, which provides certificate-free HTTPS proxying using HTTP CONNECT method. No SSL certificate installation is required on client devices.
 
 ## 🌐 Browser Configuration
 
@@ -91,7 +83,7 @@ Test the proxy connection:
 curl -x http://<your-server-ip>:8080 https://httpbin.org/ip
 
 # Check proxy status from inside container
-docker-compose exec https-proxy curl -x http://localhost:8080 https://httpbin.org/ip
+docker-compose exec tunnel-proxy curl -x http://localhost:8080 https://httpbin.org/ip
 ```
 
 ## 📊 Monitoring
@@ -101,6 +93,11 @@ Access the web interface at `http://<your-server-ip>:8081` to:
 - Monitor proxy performance
 - Check proxy pool status
 - Debug connection issues
+
+You can also use Docker logs to monitor:
+```bash
+docker-compose logs -f tunnel-proxy
+```
 
 ## 🛠️ Docker Commands
 
@@ -148,8 +145,8 @@ docker-compose build --no-cache
 Modify ports in `docker-compose.yml`:
 ```yaml
 ports:
-  - "18080:8080"  # Change host port
-  - "18081:8081"
+  - "18080:8080"  # Change host port for proxy
+  - "18081:8081"  # Change host port for web interface
 ```
 
 ### Certificate Issues
