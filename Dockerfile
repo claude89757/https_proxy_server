@@ -32,6 +32,8 @@ EXPOSE 8080 8081
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV MITMPROXY_OPTS=""
+# Allow external connections (use with caution)
+ENV MITMPROXY_LISTEN_HOST="0.0.0.0"
 
 # Run the proxy server
 CMD ["python3", "start_proxy.py"]

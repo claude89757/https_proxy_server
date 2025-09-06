@@ -75,10 +75,13 @@ def main():
     
     cmd = [
         mitmweb_path,
+        "--listen-host", "0.0.0.0",  # 监听所有网络接口
         "--listen-port", str(port),
+        "--web-host", "0.0.0.0",  # Web界面监听所有网络接口
         "--web-port", str(web_port),
         "--scripts", "proxy_addon.py",
         "--set", "confdir=~/.mitmproxy",
+        "--set", "block_global=false",  # 允许外部连接
         "--ssl-insecure",  # 忽略上游服务器的SSL证书验证
         "--no-web-open-browser"  # 不自动打开浏览器
     ]
@@ -86,10 +89,13 @@ def main():
     print(f"\n配置信息:")
     print(f"  代理端口: {port}")
     print(f"  Web界面端口: {web_port}")
-    print(f"  Web界面地址: http://127.0.0.1:{web_port}")
+    print(f"  监听地址: 0.0.0.0 (接受所有网络连接)")
+    print(f"  Web界面地址: http://0.0.0.0:{web_port}")
     print(f"\n代理配置:")
-    print(f"  HTTP代理: http://127.0.0.1:{port}")
-    print(f"  HTTPS代理: http://127.0.0.1:{port}")
+    print(f"  HTTP代理: http://<服务器IP>:{port}")
+    print(f"  HTTPS代理: http://<服务器IP>:{port}")
+    print(f"\n⚠️  安全警告: 服务正在监听所有网络接口！")
+    print(f"  建议在生产环境中使用防火墙限制访问")
     print("\n正在启动服务...")
     print("-" * 60)
     
@@ -99,8 +105,8 @@ def main():
         
         print(f"\n✓ 服务已启动 (PID: {process.pid})")
         print("\n使用说明:")
-        print("1. 在浏览器或应用中配置代理为 http://127.0.0.1:8080")
-        print("2. 访问 http://127.0.0.1:8081 查看Web界面")
+        print("1. 在浏览器或应用中配置代理为 http://<服务器IP>:8080")
+        print("2. 访问 http://<服务器IP>:8081 查看Web界面")
         print("3. 按 Ctrl+C 停止服务")
         print("\n代理池会自动每5分钟更新一次")
         print("-" * 60)

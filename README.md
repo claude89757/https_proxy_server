@@ -24,6 +24,14 @@ https_proxy_server/
 └── .dockerignore       # Docker ignore file
 ```
 
+## ⚠️ Security Notice
+
+**Important**: This proxy server is configured to accept connections from any IP address. This is necessary for cloud deployment but poses security risks. Please ensure:
+- Use strong firewall rules to limit access
+- Deploy in isolated network environments when possible
+- Monitor access logs regularly
+- Never expose sensitive internal networks through this proxy
+
 ## 🔧 Quick Start
 
 ### Prerequisites
@@ -49,8 +57,10 @@ docker-compose logs -f
 ```
 
 ### Access Points
-- **Proxy Server**: `http://localhost:8080`
-- **Web Interface**: `http://localhost:8081`
+- **Proxy Server**: `http://<your-server-ip>:8080`
+- **Web Interface**: `http://<your-server-ip>:8081`
+
+Note: Replace `<your-server-ip>` with your actual server IP address or domain name.
 
 ## 🔐 SSL Certificate Setup
 
@@ -69,7 +79,7 @@ docker cp https_proxy_server:/root/.mitmproxy/mitmproxy-ca-cert.pem ./
 ## 🌐 Browser Configuration
 
 Configure your browser to use the proxy:
-- **Proxy Address**: `localhost` or `127.0.0.1`
+- **Proxy Address**: `<your-server-ip>`
 - **Proxy Port**: `8080`
 - **Use for**: HTTP and HTTPS
 
@@ -77,16 +87,16 @@ Configure your browser to use the proxy:
 
 Test the proxy connection:
 ```bash
-# Using curl
-curl -x http://localhost:8080 https://httpbin.org/ip
+# From your local machine
+curl -x http://<your-server-ip>:8080 https://httpbin.org/ip
 
-# Check proxy status
+# Check proxy status from inside container
 docker-compose exec https-proxy curl -x http://localhost:8080 https://httpbin.org/ip
 ```
 
 ## 📊 Monitoring
 
-Access the web interface at `http://localhost:8081` to:
+Access the web interface at `http://<your-server-ip>:8081` to:
 - View real-time request logs
 - Monitor proxy performance
 - Check proxy pool status
