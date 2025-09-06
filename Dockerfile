@@ -20,7 +20,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY proxy_manager.py .
 COPY proxy_addon.py .
 COPY start_proxy.py .
-COPY test_proxy.py .
 
 # Create directory for mitmproxy certificates
 RUN mkdir -p /root/.mitmproxy

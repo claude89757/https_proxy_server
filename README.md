@@ -18,7 +18,6 @@ https_proxy_server/
 ├── proxy_manager.py      # Core proxy pool manager
 ├── proxy_addon.py        # mitmproxy addon for request handling
 ├── start_proxy.py        # Main application launcher
-├── test_proxy.py         # Proxy testing utility
 ├── requirements.txt      # Python dependencies
 ├── Dockerfile           # Docker container configuration
 ├── docker-compose.yml   # Docker Compose configuration
@@ -81,8 +80,8 @@ Test the proxy connection:
 # Using curl
 curl -x http://localhost:8080 https://httpbin.org/ip
 
-# Run test script inside container
-docker-compose exec https-proxy python3 test_proxy.py
+# Check proxy status
+docker-compose exec https-proxy curl -x http://localhost:8080 https://httpbin.org/ip
 ```
 
 ## 📊 Monitoring
