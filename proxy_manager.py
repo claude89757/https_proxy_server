@@ -11,6 +11,8 @@ class ProxyManager:
         self.proxy_list_url = "https://raw.githubusercontent.com/claude89757/free_https_proxies/main/isz_https_proxies.txt"
         self.available_proxies = []
         self.all_proxies = []
+        self.proxy_failures = {}  # 记录代理失败次数
+        self.max_failures = 3  # 连续失败3次后移除代理
         self.lock = threading.Lock()
         self.update_interval = 300  # 5分钟更新一次
         self.test_batch_size = 10  # 每批测试10个代理
@@ -86,8 +88,15 @@ class ProxyManager:
         """批量测试代理"""
         available = []
         for proxy in proxy_list:
+            # 跳过已经达到最大失败次数的代理
+            if proxy in self.proxy_failures and self.proxy_failures[proxy] >= self.max_failures:
+                continue
+                
             if self.check_proxy(proxy):
                 available.append(proxy)
+                self.mark_proxy_success(proxy)  # 成功后重置失败计数
+            else:
+                self.mark_proxy_failed(proxy)  # 记录失败
         return available
     
     def update_proxies(self):
@@ -114,6 +123,8 @@ class ProxyManager:
         with self.lock:
             self.all_proxies = new_proxies
             self.available_proxies = list(set(available))
+            # 清理失败计数中不存在的代理
+            self.proxy_failures = {k: v for k, v in self.proxy_failures.items() if k in new_proxies}
             print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 代理池更新完成，可用代理数: {len(self.available_proxies)}")
     
     def update_thread(self):
@@ -132,6 +143,26 @@ class ProxyManager:
         # 立即执行一次更新
         self.update_proxies()
     
+    def mark_proxy_failed(self, proxy):
+        """标记代理失败"""
+        with self.lock:
+            if proxy in self.proxy_failures:
+                self.proxy_failures[proxy] += 1
+            else:
+                self.proxy_failures[proxy] = 1
+            
+            # 如果失败次数超过阈值，从可用列表中移除
+            if self.proxy_failures[proxy] >= self.max_failures:
+                if proxy in self.available_proxies:
+                    self.available_proxies.remove(proxy)
+                    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 代理 {proxy} 失败{self.max_failures}次，已移除")
+    
+    def mark_proxy_success(self, proxy):
+        """标记代理成功，重置失败计数"""
+        with self.lock:
+            if proxy in self.proxy_failures:
+                del self.proxy_failures[proxy]
+    
     def get_random_proxy(self):
         """获取一个随机的可用代理"""
         with self.lock:
@@ -146,3 +177,12 @@ class ProxyManager:
         """获取所有可用代理"""
         with self.lock:
             return self.available_proxies.copy()
+    
+    def get_proxy_stats(self):
+        """获取代理统计信息"""
+        with self.lock:
+            return {
+                'total_proxies': len(self.all_proxies),
+                'available_proxies': len(self.available_proxies),
+                'failed_proxies': len([p for p, f in self.proxy_failures.items() if f >= self.max_failures])
+            }

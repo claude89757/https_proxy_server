@@ -99,13 +99,16 @@ class TunnelProxy:
                 response = proxy_socket.recv(4096).decode()
                 if "200 Connection Established" in response or "200 OK" in response:
                     logger.info(f"通过代理 {proxy} 连接到 {host}:{port} 成功")
+                    self.proxy_manager.mark_proxy_success(proxy)
                     return proxy_socket
                 else:
                     logger.warning(f"代理 {proxy} 响应错误: {response[:100]}")
+                    self.proxy_manager.mark_proxy_failed(proxy)
                     proxy_socket.close()
                     
             except Exception as proxy_error:
                 logger.warning(f"代理连接 {proxy} 失败: {proxy_error}")
+                self.proxy_manager.mark_proxy_failed(proxy)
                 if 'proxy_socket' in locals():
                     proxy_socket.close()
         
@@ -236,10 +239,12 @@ class TunnelProxy:
         def log_stats():
             while True:
                 time.sleep(60)  # 每分钟记录一次
+                proxy_stats = self.proxy_manager.get_proxy_stats()
                 logger.info(
                     f"状态 - 总连接: {self.stats['connections']}, "
                     f"活跃连接: {self.stats['active_connections']}, "
-                    f"传输字节: {self.stats['bytes_transferred']}"
+                    f"传输字节: {self.stats['bytes_transferred']}, "
+                    f"可用代理: {proxy_stats['available_proxies']}/{proxy_stats['total_proxies']}"
                 )
         
         stats_thread = threading.Thread(target=log_stats, daemon=True)
