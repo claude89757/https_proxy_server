@@ -18,6 +18,23 @@ services:
     networks:
       - proxy-network
 
+  # HTTP CONNECT Tunnel Proxy (Certificate-free)
+  tunnel-proxy:
+    build: .
+    container_name: tunnel_proxy_server
+    ports:
+      - "8082:8080"  # Tunnel proxy port
+    volumes:
+      # Optional: Mount logs directory
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PROXY_MODE=tunnel
+    restart: unless-stopped
+    networks:
+      - proxy-network
+    command: ["python", "start_tunnel_proxy.py", "--host", "0.0.0.0", "--port", "8080"]
+
 volumes:
   mitmproxy-certs:
     name: mitmproxy_certificates
