@@ -1,81 +1,144 @@
-# MITMWEB 代理服务
+# HTTPS Proxy Server
 
-使用 mitmproxy 搭建的代理服务，自动从 GitHub 获取并维护可用代理池。
+A robust HTTPS proxy server built with mitmproxy that automatically maintains a pool of working proxies from GitHub sources.
 
-## 功能特点
+## 🚀 Features
 
-- 自动从 GitHub 获取代理列表（每5分钟更新）
-- 自动测试代理可用性（针对特定目标网站）
-- 自动剔除不可用代理
-- 代理池管理和状态监控
-- Web界面实时查看请求
+- **Automatic Proxy Pool Management**: Fetches and updates proxy list from GitHub every 5 minutes
+- **Health Check System**: Continuously validates proxy availability against target websites
+- **Real-time Monitoring**: Web interface to monitor proxy requests and traffic
+- **SSL/TLS Support**: Full HTTPS interception with certificate management
+- **Chrome Integration**: Easy browser setup with dedicated launch script
+- **Thread-safe Operations**: Concurrent proxy testing and management
 
-## 文件说明
+## 📁 Project Structure
 
 ```
-proxy/
-├── proxy_manager.py      # 代理管理器（获取、测试、维护代理池）
-├── proxy_addon.py        # mitmproxy 插件（记录代理使用情况）
-├── start_proxy.py        # 启动脚本
-├── test_proxy.py         # 测试脚本
-├── start_chrome_proxy.sh # Chrome代理启动脚本
-├── install_cert_manual.md # 证书安装指南
-└── requirements.txt      # 依赖包
+https_proxy_server/
+├── proxy_manager.py      # Core proxy pool manager (fetching, testing, maintenance)
+├── proxy_addon.py        # mitmproxy addon for request handling and monitoring
+├── start_proxy.py        # Main application launcher
+├── test_proxy.py         # Proxy testing utility
+├── start_chrome_proxy.sh # Chrome browser launcher with proxy settings
+├── install_cert_manual.md # SSL certificate installation guide
+└── requirements.txt      # Python dependencies
 ```
 
-## 安装
+## 🔧 Installation
 
+### Prerequisites
+- Python 3.7+
+- pip3
+
+### Setup
+
+1. Clone the repository:
 ```bash
-# 安装依赖
-pip3 install mitmproxy requests
+git clone https://github.com/claude89757/https_proxy_server.git
+cd https_proxy_server
+```
 
-# 或使用 requirements.txt
+2. Install dependencies:
+```bash
 pip3 install -r requirements.txt
 ```
 
-## 使用方法
+## 📖 Usage
 
-### 1. 配置证书（首次使用）
+### 1. SSL Certificate Setup (First Time Only)
 
-参考 `install_cert_manual.md` 手动安装证书到系统钥匙串。
+For HTTPS traffic interception, you need to install the mitmproxy certificate:
+- Follow the instructions in `install_cert_manual.md`
+- The certificate ensures secure HTTPS proxy functionality
 
-### 2. 启动代理服务
+### 2. Start the Proxy Server
 
 ```bash
 python3 start_proxy.py
 ```
 
-服务启动后：
-- 代理端口：http://127.0.0.1:8080
-- Web监控界面：http://127.0.0.1:8081
+This will start:
+- **Proxy server**: `http://127.0.0.1:8080`
+- **Web monitoring interface**: `http://127.0.0.1:8081`
 
-### 3. 配置浏览器
+### 3. Configure Your Browser
 
-**方法A：使用专用Chrome实例（推荐）**
+#### Option A: Use Dedicated Chrome Instance (Recommended)
 ```bash
 ./start_chrome_proxy.sh
 ```
+This launches Chrome with pre-configured proxy settings.
 
-**方法B：系统代理设置**
-- 系统设置 > 网络 > 高级 > 代理
-- HTTP/HTTPS代理：127.0.0.1:8080
+#### Option B: Manual System Proxy Configuration
+1. Go to System Settings → Network → Advanced → Proxies
+2. Set HTTP/HTTPS proxy to: `127.0.0.1:8080`
 
-### 4. 测试代理
+### 4. Test the Proxy
 
+Verify the proxy is working:
 ```bash
 python3 test_proxy.py
 ```
 
-## 工作原理
+## 🔄 How It Works
 
-1. `proxy_manager.py` 定期从 GitHub 获取代理列表
-2. 使用提供的测试函数验证代理可用性
-3. mitmproxy 作为本地代理服务器运行
-4. `proxy_addon.py` 记录和监控代理使用情况
+1. **Proxy Fetching**: `proxy_manager.py` retrieves proxy lists from GitHub repositories
+2. **Validation**: Each proxy is tested against target websites for availability
+3. **Local Proxy Server**: mitmproxy runs as a local proxy server on port 8080
+4. **Request Routing**: Valid proxies are used to route your HTTP/HTTPS requests
+5. **Monitoring**: `proxy_addon.py` tracks proxy usage and performance metrics
 
-## 注意事项
+## ⚙️ Configuration
 
-- 代理池每5分钟自动更新
-- 仅保留通过特定网站测试的可用代理
-- 证书必须正确安装才能代理HTTPS流量
-- 端口冲突时会自动清理或使用备用端口# https_proxy_server
+The proxy manager includes configurable parameters:
+- Update interval: 5 minutes (default)
+- Test batch size: 10 proxies per batch
+- Timeout settings for proxy validation
+- Target URL for health checks
+
+## 🛡️ Security Notes
+
+- The proxy server requires SSL certificate installation for HTTPS interception
+- All traffic passes through the local mitmproxy instance
+- Proxy credentials and sensitive data are handled securely
+- Regular proxy rotation enhances anonymity
+
+## 📊 Monitoring
+
+Access the web interface at `http://127.0.0.1:8081` to:
+- View real-time request logs
+- Monitor proxy performance
+- Check proxy pool status
+- Debug connection issues
+
+## 🐛 Troubleshooting
+
+### Port Already in Use
+The application automatically handles port conflicts by:
+- Detecting and terminating existing processes
+- Using alternative ports if needed
+
+### Certificate Issues
+- Ensure the mitmproxy certificate is properly installed in your system keychain
+- For Chrome: Check that certificates are trusted for SSL
+
+### No Available Proxies
+- The system will continuously retry fetching proxies from GitHub
+- Check your internet connection
+- Verify the GitHub source URL is accessible
+
+## 📝 License
+
+This project is open source and available under the MIT License.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📧 Support
+
+For issues and questions, please open an issue on GitHub.
+
+---
+
+**Note**: This tool is for educational and testing purposes. Please ensure compliance with all applicable laws and terms of service when using proxy services.
