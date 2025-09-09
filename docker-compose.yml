@@ -17,10 +17,6 @@ services:
       - proxy-network
     command: ["python", "start_tunnel_proxy.py", "--host", "0.0.0.0", "--port", "8080"]
 
-volumes:
-  mitmproxy-certs:
-    name: mitmproxy_certificates
-
 networks:
   proxy-network:
     driver: bridge
